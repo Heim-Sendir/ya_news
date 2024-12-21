@@ -34,7 +34,7 @@ def test_anoymous_user_cant_create_comment(
 
 
 def test_user_can_edit_comment(
-    author_client, news, comment, form_data_comment,
+    author_client, comment, form_data_comment,
     pk_for_comment, pk_for_news
 ):
     url = reverse('news:edit', args=pk_for_comment)
