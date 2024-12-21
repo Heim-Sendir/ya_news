@@ -1,3 +1,5 @@
+import pytest
+
 from http import HTTPStatus
 from pytest_django.asserts import assertRedirects, assertFormError
 
@@ -80,3 +82,20 @@ def test_comment_form_on_forbiden_words(
         form_data_comment['text'] = word
         response = author_client.post(url, data=form_data_comment)
         assertFormError(response, 'form', 'text', WARNING)
+
+
+@pytest.mark.parametrize(
+    'name, args',
+    (
+        ('news:edit', pytest.lazy_fixture('pk_for_comment')),
+        ('news:delete', pytest.lazy_fixture('pk_for_comment')),
+    )
+)
+def test_anonymous_user_cant_edit_comment(
+    client, name, args
+):
+    url_login = reverse('users:login')
+    url = reverse(name, args=args)
+    excepted_url = f'{url_login}?next={url}'
+    response = client.get(url)
+    assertRedirects(response, excepted_url)
